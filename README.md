@@ -106,8 +106,8 @@ Para rodar este projeto, é necessário ter instalado:
 ### 1. Clonar o Repositório
 
 ```bash
-git clone https://github.com/monalizaloren/ETL-Golang.git
-cd ETL-Golang
+git clone https://github.com/monalizaloren/Neoway.git
+cd Neoway
 ```
 
 ### 2. Instalar Dependências
@@ -156,10 +156,6 @@ A aplicação irá:
 2. Verificar se as tabelas necessárias existem e criá-las se necessário.
 3. Processar o arquivo de entrada (`assets/base_teste.txt`) e inserir os dados no banco de dados.
 4. Atualizar os status dos CPFs e CNPJs com base nas regras de validação.
-
-```bash
-go test ./internal/validation
-```
 
 ## Notas Adicionais
 
