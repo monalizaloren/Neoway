@@ -10,6 +10,7 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
+// ProcessFileAndPersist opens a file, determines the delimiter, and processes its content to persist data in the database.
 func ProcessFileAndPersist(filePath string, pool *pgxpool.Pool) error {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -25,6 +26,7 @@ func ProcessFileAndPersist(filePath string, pool *pgxpool.Pool) error {
 	return processAndPersistData(file, delimiter, pool)
 }
 
+// processAndPersistData reads data from the file, splits it into rows, and inserts it into the database in batches.
 func processAndPersistData(file *os.File, delimiter string, pool *pgxpool.Pool) error {
 	scanner := bufio.NewScanner(file)
 	var batchRows [][]string

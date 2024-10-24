@@ -5,6 +5,12 @@ import (
 	"strconv"
 )
 
+// CleanString removes all non-numeric characters from a string.
+func CleanString(data string) string {
+	re := regexp.MustCompile(`\D`)
+	return re.ReplaceAllString(data, "")
+}
+
 func allDigitsEqual(data string) bool {
 	for i := 1; i < len(data); i++ {
 		if data[i] != data[0] {
@@ -14,36 +20,18 @@ func allDigitsEqual(data string) bool {
 	return true
 }
 
-func FormatCPF(cpf string) (string, bool) {
-	re := regexp.MustCompile(`\D`)
-	cpf = re.ReplaceAllString(cpf, "")
+func ValidateCPF(cpf string) string {
+	cpf = CleanString(cpf)
 
 	if len(cpf) != 11 || allDigitsEqual(cpf) {
-		return "", false
+		return "invalid"
 	}
 
-	formattedCPF := cpf[:3] + "." + cpf[3:6] + "." + cpf[6:9] + "-" + cpf[9:]
-
-	if !ValidateCPF(cpf) {
-		return "", false
-	}
-	return formattedCPF, true
-}
-
-func ValidateCPF(cpf string) bool {
-	re := regexp.MustCompile(`\D`)
-	cpf = re.ReplaceAllString(cpf, "")
-
-	if len(cpf) != 11 || allDigitsEqual(cpf) {
-		return false
-	}
-
-	// First check digit calculation
 	sum := 0
 	for i, weight := range []int{10, 9, 8, 7, 6, 5, 4, 3, 2} {
 		num, err := strconv.Atoi(string(cpf[i]))
 		if err != nil {
-			return false
+			return "invalid"
 		}
 		sum += num * weight
 	}
@@ -52,15 +40,14 @@ func ValidateCPF(cpf string) bool {
 		digit1 = 0
 	}
 	if strconv.Itoa(digit1) != string(cpf[9]) {
-		return false
+		return "invalid"
 	}
 
-	// Second check digit calculation
 	sum = 0
 	for i, weight := range []int{11, 10, 9, 8, 7, 6, 5, 4, 3, 2} {
 		num, err := strconv.Atoi(string(cpf[i]))
 		if err != nil {
-			return false
+			return "invalid"
 		}
 		sum += num * weight
 	}
@@ -69,49 +56,33 @@ func ValidateCPF(cpf string) bool {
 		digit2 = 0
 	}
 
-	return strconv.Itoa(digit2) == string(cpf[10])
+	if strconv.Itoa(digit2) == string(cpf[10]) {
+		return "valid"
+	}
+	return "invalid"
 }
 
-func FormatCNPJ(cnpj string) (string, bool) {
-	re := regexp.MustCompile(`\D`)
-	cnpj = re.ReplaceAllString(cnpj, "")
+func ValidateCNPJ(cnpj string) string {
+	cnpj = CleanString(cnpj)
 
 	if len(cnpj) != 14 || allDigitsEqual(cnpj) {
-		return "", false
+		return "invalid"
 	}
 
-	formattedCNPJ := cnpj[:2] + "." + cnpj[2:5] + "." + cnpj[5:8] + "/" + cnpj[8:12] + "-" + cnpj[12:]
-
-	if !ValidateCNPJ(cnpj) {
-		return "", false
-	}
-	return formattedCNPJ, true
-}
-
-func ValidateCNPJ(cnpj string) bool {
-	re := regexp.MustCompile(`\D`)
-	cnpj = re.ReplaceAllString(cnpj, "")
-
-	if len(cnpj) != 14 || allDigitsEqual(cnpj) {
-		return false
-	}
-
-	// First check digit validation
 	digit1 := calculateCNPJDigit(cnpj[:12], 5)
 	if int(cnpj[12]-'0') != digit1 {
-		return false
+		return "invalid"
 	}
 
-	// Second check digit validation
-	//
 	digit2 := calculateCNPJDigit(cnpj[:13], 6)
 	if int(cnpj[13]-'0') != digit2 {
-		return false
+		return "invalid"
 	}
 
-	return true
+	return "valid"
 }
 
+// calculateCNPJDigit calculates the check digit for a CNPJ.
 func calculateCNPJDigit(cnpj string, initialWeight int) int {
 	weights := []int{}
 	weight := initialWeight

@@ -29,9 +29,4 @@ func main() {
 		fmt.Println("File processed successfully.")
 	}
 
-	// Update CPF and CNPJ statuses
-	err = db.UpdateCPFandCNPJStatus(pool)
-	if err != nil {
-		log.Printf("Error updating CPF and CNPJ status: %v", err)
-	}
 }
